@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const zod = require("zod");
 const jwt = require("jsonwebtoken");
-const User = require("../db");
+const { User } = require("../db");
 const { JWT_SECRET } = require("../config");
 
 const signupBody = zod.object({
@@ -39,7 +39,7 @@ router.post("/signup", async (req, res) => {
 
   const userId = user._id;
 
-  const token = jwt.sign({ userId, JWT_SECRET });
+  const token = jwt.sign({ userId }, JWT_SECRET);
 
   res.json({
     message: "User created successfully",
@@ -47,23 +47,36 @@ router.post("/signup", async (req, res) => {
   });
 });
 
-// router.post("/signin", async (req, res) => {
-//   const { success } = signupBody.safeParse(req.body);
-//   if (!success) {
-//     res.status(411).json({
-//       message: "Incorrect inputs",
-//     });
-//   }
+router.post("/signin", async (req, res) => {
+  const { success } = signupBody.safeParse(req.body);
+  if (!success) {
+    res.status(411).json({
+      message: "Incorrect inputs",
+    });
+  }
 
-//   const existingUser = await User.findOne({
-//     username: req.body.username,
-//   });
+  const user = await User.findOne({
+    username: req.body.username,
+    password: req.body.password,
+  });
 
-//   if(existingUser.username === req.body.username && existingUser.password === req.body.username){
-//     res.status(200){
-//       token: "jwt"
-//     }
-//   }
-// });
+  if (user) {
+    const token = jwt.sign(
+      {
+        userId: user._id,
+      },
+      JWT_SECRET
+    );
+
+    res.json({
+      token: token,
+    });
+    return;
+  }
+
+  res.status(411).json({
+    message: "Error while logging in",
+  });
+});
 
 module.exports = router;
