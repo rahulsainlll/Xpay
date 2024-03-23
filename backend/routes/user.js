@@ -13,6 +13,18 @@ const signupBody = zod.object({
   password: zod.string(),
 });
 
+const signinBody = zod.object({
+  username: zod.string().email(),
+  password: zod.string(),
+});
+
+const updateBody = zod.object({
+  password: zod.string().optional(),
+  firstName: zod.string().optional(),
+  lastName: zod.string().optional(),
+});
+
+
 // Signup
 router.post("/signup", async (req, res) => {
   const { success } = signupBody.safeParse(req.body);
@@ -31,8 +43,8 @@ router.post("/signup", async (req, res) => {
       message: "Email already taken",
     });
   }
-  
-// user
+
+  // user
   const user = await User.create({
     username: req.body.username,
     password: req.body.password,
@@ -43,10 +55,10 @@ router.post("/signup", async (req, res) => {
   const userId = user._id;
 
   // Account
-await Account.create({
-  userId,
-  balance: 1 + Math.random() * 10000,
-});
+  await Account.create({
+    userId,
+    balance: 1 + Math.random() * 10000,
+  });
   const token = jwt.sign({ userId }, JWT_SECRET);
 
   res.json({
@@ -57,7 +69,7 @@ await Account.create({
 
 // Signin
 router.post("/signin", async (req, res) => {
-  const { success } = signupBody.safeParse(req.body);
+  const { success } = signinBody.safeParse(req.body);
   if (!success) {
     res.status(411).json({
       message: "Incorrect inputs",
@@ -90,7 +102,7 @@ router.post("/signin", async (req, res) => {
 
 // Update
 router.put("/", authMiddleware, async (req, res) => {
-  const { success } = signupBody.safeParse(req.body);
+  const { success } = updateBody.safeParse(req.body);
   if (!success) {
     res.status(411).json({
       message: "Error while updating information",
@@ -99,7 +111,7 @@ router.put("/", authMiddleware, async (req, res) => {
 
   // const updatedUser = User.updateOne({
   //   password: req.body.password,
-  //   firstName: req.body.firstName,
+  //   firstName: req.body.firstName, 
   //   lastName: req.body.lastName,
   // });
 
@@ -119,6 +131,7 @@ router.get("/bulk", async (req, res) => {
       {
         firstName: {
           $regex: filter,
+          $options: "i",
         },
       },
       {
@@ -138,5 +151,5 @@ router.get("/bulk", async (req, res) => {
     })),
   });
 });
-
+ 
 module.exports = router;

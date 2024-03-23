@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const { Account } = require("../db");
-const { JWT_SECRET } = require("../config");
 const { authMiddleware } = require("../middleware");
 const mongoose = require("mongoose");
 
@@ -56,38 +55,6 @@ router.post("/transfer", authMiddleware, async (req, res) => {
     { $inc: { balance: amount } }
   ).session(session);
 
-  //   const send = await Account.findByIdAndUpdate(
-  //     req.userId,
-  //     {
-  //       $inc: { balance: -amount },
-  //     },
-  //     { new: true }
-  //   );
-  //   const receive = await Account.findByIdAndUpdate(
-  //     to,
-  //     {
-  //       $inc: { balance: amount },
-  //     },
-  //     { new: true }
-  //   );
-
-  //   if (!(send && receive)) {
-  //     await Account.findByIdAndUpdate(req.userId, {
-  //       $inc: { balance: amount },
-  //     });
-
-  //     await Account.findByIdAndUpdate(to, {
-  //       $inc: { balance: -amount },
-  //     });
-
-  //     res.json({
-  //       message: "Invalid account",
-  //     });
-  //   }
-
-  //   res.json({
-  //     message: "Transfer successful",
-  //   });
 
   await session.commitTransaction();
   res.json({
