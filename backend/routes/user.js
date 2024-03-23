@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const zod = require("zod");
 const jwt = require("jsonwebtoken");
-const { User } = require("../db");
+const { User, Account } = require("../db");
 const { JWT_SECRET } = require("../config");
 const { authMiddleware } = require("../middleware");
 
@@ -18,7 +18,7 @@ router.post("/signup", async (req, res) => {
   const { success } = signupBody.safeParse(req.body);
   if (!success) {
     res.status(411).json({
-      message: "Email already taken / Incorrect inputs",
+      message: "Incorrect inputs",
     });
   }
 
@@ -28,10 +28,11 @@ router.post("/signup", async (req, res) => {
 
   if (existingUser) {
     res.status(411).json({
-      message: "Email already taken / Incorrect inputs",
+      message: "Email already taken",
     });
   }
-
+  
+// user
   const user = await User.create({
     username: req.body.username,
     password: req.body.password,
@@ -41,6 +42,11 @@ router.post("/signup", async (req, res) => {
 
   const userId = user._id;
 
+  // Account
+await Account.create({
+  userId,
+  balance: 1 + Math.random() * 10000,
+});
   const token = jwt.sign({ userId }, JWT_SECRET);
 
   res.json({
