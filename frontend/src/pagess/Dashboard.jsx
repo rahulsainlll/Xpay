@@ -1,9 +1,11 @@
-import React from 'react'
+import Balance from "../components/Balance";
+import NavBar from "../components/NavBar";
 
 export default function Dashboard() {
   return (
     <div>
-      Dashboard
+      <NavBar />
+      <Balance />
     </div>
-  )
+  );
 }

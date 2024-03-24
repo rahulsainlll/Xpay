@@ -56,7 +56,7 @@ router.post("/signup", async (req, res) => {
   // Account
   await Account.create({
     userId,
-    balance: 1 + Math.random() * 100000,
+    balance: (1 + Math.random() * 100000).toFixed(2),
   });
   const token = jwt.sign({ userId }, JWT_SECRET);
 
@@ -164,3 +164,4 @@ router.get("/bulk", authMiddleware, async (req, res) => {
 });
 
 module.exports = router;
+
