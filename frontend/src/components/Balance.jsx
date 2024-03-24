@@ -1,42 +1,43 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { setToken, getToken } from "../../utilis/tokenManagement";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 export default function Balance() {
   const [balance, setBalance] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get("/api/v1/account/balance")
-      .then((response) => {
-        setBalance(response.data.balance);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching balance:", error);
-        setLoading(false);
-      });
-  }, [balance, loading]);
+    const token = getToken();
+    if (token) {
+      setToken(token);
+    }
+  }, []);
+
+  const currBalance = async () => {
+    try {
+      const { data } = await axios.get("/api/v1/account/balance");
+
+      if (data.error) {
+        toast.error(data.error);
+        setBalance("");
+      } else {
+        setBalance(data.balance);
+      }
+    } catch (error) {
+      console.error("Frontend Balance error:", error);
+      setBalance("");
+    }
+  };
+
+  useEffect(() => {
+    currBalance();
+  }, [balance]);
 
   return (
-    <div className="bg-white shadow-md rounded px-6 py-4">
-      <h2 className="text-lg font-semibold mb-2">Balance Overview</h2>
-      {loading ? (
-        <p className="text-gray-600">Loading balance...</p>
-      ) : (
-        <>
-          {balance !== null ? (
-            <p className="text-gray-800">
-              Your balance is{" "}
-              <span className="font-bold text-green-600">Rs. {balance}</span>
-            </p>
-          ) : (
-            <p className="text-red-600">
-              Failed to fetch balance. Please try again later.
-            </p>
-          )}
-        </>
-      )}
+    <div className="p-4">
+      {balance !== null
+        ? `Your balance is Rs. ${balance}`
+        : "Balance featching error"}
     </div>
   );
 }

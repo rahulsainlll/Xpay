@@ -3,7 +3,7 @@ import DP from "../assets/favicon.png";
 
 export default function NavBar() {
   return (
-    <nav className="border-b border-gray-300 p-2 flex justify-between items-center">
+    <nav className="border-b border-gray-300 p-4 flex justify-between items-center">
       <div className="flex items-center">
         <img src={Logo} alt="Xpay Logo" className="w-14 h-14" />
         <h1 className="text-xl font-bold">Xpay</h1>
