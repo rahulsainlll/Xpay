@@ -28,7 +28,7 @@ router.post("/transfer", authMiddleware, async (req, res) => {
     if (!account || account.balance < amount) {
       await session.abortTransaction();
       return res.status(400).json({
-        message: "Insufficient balance",
+        error: "Insufficient balance",
       });
     }
 

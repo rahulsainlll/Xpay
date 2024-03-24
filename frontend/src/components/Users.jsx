@@ -26,7 +26,7 @@ export default function Users() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Users</h1>
+      <h1 className="text-3xl font-bold mb-4">Users</h1>
       <div className="mb-4">
         <input
           type="text"
