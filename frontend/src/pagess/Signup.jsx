@@ -26,15 +26,16 @@ export default function Signin() {
       if (data.error) {
         toast.error(data.error);
       } else {
-        setFirstName("")
+        setFirstName("");
         setLastName("");
         setUsername("");
         setPassword("");
+        localStorage.setItem("token", data.token);
         toast.success("Register Succesful.");
         navigate("/signin");
       }
     } catch (error) {
-      console.log(error);
+      console.log("Frontent register errot:" + error);
     }
   };
 

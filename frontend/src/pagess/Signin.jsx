@@ -24,11 +24,12 @@ export default function Signin() {
       } else {
         setUsername("");
         setPassword("");
+        localStorage.setItem("token", data.token);
         toast.success("Login Succesful. Welcome!");
         navigate("/dashboard");
       }
     } catch (error) {
-      console.log(error);
+      console.log("Frontent login error:"+error);
     }
   };
 

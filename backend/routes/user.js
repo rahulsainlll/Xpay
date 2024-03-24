@@ -24,24 +24,21 @@ const updateBody = zod.object({
   lastName: zod.string().optional(),
 });
 
-
 // Signup
 router.post("/signup", async (req, res) => {
   const { success } = signupBody.safeParse(req.body);
   if (!success) {
-    res.status(411).json({
+    return res.json({
       error: "Incorrect inputs",
     });
   }
-
-  
 
   const existingUser = await User.findOne({
     username: req.body.username,
   });
 
   if (existingUser) {
-    res.status(411).json({
+    return res.json({
       error: "Email already taken",
     });
   }
@@ -73,8 +70,8 @@ router.post("/signup", async (req, res) => {
 router.post("/signin", async (req, res) => {
   const { success } = signinBody.safeParse(req.body);
   if (!success) {
-    res.status(411).json({
-      message: "Incorrect inputs",
+    return res.json({
+      error: "Incorrect inputs",
     });
   }
 
@@ -97,8 +94,8 @@ router.post("/signin", async (req, res) => {
     return;
   }
 
-  res.status(411).json({
-    message: "Error while logging in",
+  res.json({
+    error: "Error while logging in",
   });
 });
 
@@ -107,13 +104,13 @@ router.put("/", authMiddleware, async (req, res) => {
   const { success } = updateBody.safeParse(req.body);
   if (!success) {
     res.status(411).json({
-      message: "Error while updating information",
+      error: "Error while updating information",
     });
   }
 
   // const updatedUser = User.updateOne({
   //   password: req.body.password,
-  //   firstName: req.body.firstName, 
+  //   firstName: req.body.firstName,
   //   lastName: req.body.lastName,
   // });
 
@@ -125,25 +122,36 @@ router.put("/", authMiddleware, async (req, res) => {
 });
 
 // Filter
-router.get("/bulk", async (req, res) => {
+router.get("/bulk", authMiddleware, async (req, res) => {
   const filter = req.query.filter || "";
-
-  const users = await User.find({
-    $or: [
-      {
-        firstName: {
-          $regex: filter,
-          $options: "i",
-        },
-      },
-      {
-        lastName: {
-          $regex: filter,
-          $options: "i",
-        },
-      },
-    ],
+  
+  const currentUserID = req.userId;
+  const currentUser = await User.findOne({
+    userId: currentUserID,
   });
+
+  let users = [];
+  if (
+    !(currentUser.firstName === filter) &&
+    !(currentUser.lastName === filter)
+  ) {
+    users = await User.find({
+      $or: [
+        {
+          firstName: {
+            $regex: filter,
+            $options: "i",
+          },
+        },
+        {
+          lastName: {
+            $regex: filter,
+            $options: "i",
+          },
+        },
+      ],
+    });
+  }
 
   res.json({
     user: users.map((user) => ({
@@ -154,5 +162,5 @@ router.get("/bulk", async (req, res) => {
     })),
   });
 });
- 
+
 module.exports = router;
