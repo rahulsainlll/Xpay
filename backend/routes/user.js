@@ -30,9 +30,11 @@ router.post("/signup", async (req, res) => {
   const { success } = signupBody.safeParse(req.body);
   if (!success) {
     res.status(411).json({
-      message: "Incorrect inputs",
+      error: "Incorrect inputs",
     });
   }
+
+  
 
   const existingUser = await User.findOne({
     username: req.body.username,
@@ -40,7 +42,7 @@ router.post("/signup", async (req, res) => {
 
   if (existingUser) {
     res.status(411).json({
-      message: "Email already taken",
+      error: "Email already taken",
     });
   }
 

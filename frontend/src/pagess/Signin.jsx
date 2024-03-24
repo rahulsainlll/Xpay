@@ -3,11 +3,34 @@ import Heading from "../components/Heading";
 import Button from "../components/Button";
 import InputBox from "../components/InputBox";
 import BottomWarning from "../components/BottomWarning";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Signin() {
-  
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const Login = async () => {
+    try {
+      const { data } = await axios.post("/api/v1/user/signin", {
+        username,
+        password,
+      });
+
+      if (data.error) {
+        toast.error(data.error);
+      } else {
+        setUsername("");
+        setPassword("");
+        toast.success("Login Succesful. Welcome!");
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className=" h-screen flex justify-center">
@@ -28,7 +51,7 @@ export default function Signin() {
             placeholder={"123456q"}
             label={"Password"}
           />
-          <Button label={"Sign In"} />
+          <Button onclick={() => Login()} label={"Sign In"} />
           <BottomWarning
             label={"Don't have an account?"}
             buttonText={"Sign up"}
