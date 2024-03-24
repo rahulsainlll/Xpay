@@ -66,12 +66,17 @@ cd frontend
 npm install
 npm run dev
 ```
-Usage/Examples
+## Usage
 
-![Screenshot of Xpay interface](/images/login.png)
+### Login
+![Screenshot of Xpay Login Page](/images/Login.png)
+### DashBoard
+![Screenshot of Xpay Dashboard Page](/images/Dashboard.png)
+### Send money
+![Screenshot of Xpay Send Page](/images/SEND.png)
 
 
-Acknowledgements
+## Acknowledgements
 
 Thanks to all testers of the project.
 Special thanks to Harkirat Sir for his invaluable guidance.
