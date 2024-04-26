@@ -7,7 +7,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => console.log(`MongoDB connected 🧠`))
-  .catch((err) => console.log(`Database not connected`, process.env.MONGO_DB));
+  .catch((err) => console.log(`Database not connected`, err));
 
 const userSchema = new mongoose.Schema({
   username: {
