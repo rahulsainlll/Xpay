@@ -75,7 +75,6 @@ npm run dev
 ### Send money
 ![Screenshot of Xpay Send Page](/images/SEND.png)
 
-
 ## Acknowledgements
 
 Thanks to all testers of the project.
